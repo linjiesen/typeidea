@@ -20,6 +20,9 @@ class Comment(models.Model):
     status = models.PositiveIntegerField(default=STATUS_NORMAL, choices=STATUS_ITEMS, verbose_name="狀態")
     created_time = models.DateTimeField(auto_now_add=True, verbose_name="創建時間")
 
+    def __str__(self):
+        return self.target
+
     class Meta:
         verbose_name = "評論"
         verbose_name_plural = verbose_name

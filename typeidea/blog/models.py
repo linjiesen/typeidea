@@ -18,6 +18,9 @@ class Category(models.Model):
     owner = models.ForeignKey(User, verbose_name="作者")
     created_time = models.DateTimeField(auto_now_add=True, verbose_name="創建時間")
 
+    def __str__(self):
+        return self.name
+
     class Meta:
         verbose_name = '分類'
         verbose_name_plural = verbose_name
@@ -36,6 +39,9 @@ class Tag(models.Model):
     status = models.PositiveIntegerField(default=STATUS_NORMAL, choices=STATUS_ITEMS, verbose_name="狀態")
     owner = models.ForeignKey(User, verbose_name="作者")
     created_time = models.DateTimeField(auto_now_add=True, verbose_name="創建時間")
+
+    def __str__(self):
+        return self.name
 
     class Meta:
         verbose_name = "標籤"
@@ -61,6 +67,9 @@ class Post(models.Model):
     tag = models.ManyToManyField(Tag, verbose_name="標籤")
     owner = models.ForeignKey(User, verbose_name="作者")
     created_time = models.DateTimeField(auto_now_add=True, verbose_name="創建時間")
+
+    def __str__(self):
+        return self.title
 
     class Meta:
         ordering = ['-id']
