@@ -12,7 +12,7 @@ class Comment(models.Model):
         (STATUS_DELETE, '刪除'),
     )
 
-    target = models.ForeignKey(Post, verbose_name="評論目標")
+    target = models.ForeignKey(Post, verbose_name="評論目標", on_delete=models.CASCADE)
     content = models.CharField(max_length=2000, verbose_name="內容")
     nickname = models.CharField(max_length=50, verbose_name="昵稱")
     website = models.URLField(verbose_name="網站")
