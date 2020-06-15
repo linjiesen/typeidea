@@ -1,6 +1,8 @@
 from django.db import models
 
 from blog.models import Post
+
+
 # Create your models here.
 
 
@@ -12,7 +14,7 @@ class Comment(models.Model):
         (STATUS_DELETE, '刪除'),
     )
 
-    target = models.ForeignKey(Post, verbose_name="評論目標", on_delete=models.CASCADE)
+    target = models.CharField(max_length=100, verbose_name="評論目標")
     content = models.CharField(max_length=2000, verbose_name="內容")
     nickname = models.CharField(max_length=50, verbose_name="昵稱")
     website = models.URLField(verbose_name="網站")
@@ -22,6 +24,10 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.target
+
+    @classmethod
+    def get_by_target(cls, target):
+        return cls.objects.filter(target=target, status=cls.STATUS_NORMAL)
 
     class Meta:
         verbose_name = "評論"

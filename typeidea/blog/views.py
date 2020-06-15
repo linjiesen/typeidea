@@ -6,6 +6,8 @@ from django.shortcuts import get_object_or_404
 
 from .models import Post, Tag, Category
 from config.models import SideBar
+from comment.models import Comment
+from comment.forms import CommentForm
 
 
 # Create your views here.
@@ -41,25 +43,6 @@ def post_list(request, category_id=None, tag_id=None):
     return render(request, 'list.html', context=context)
 
 
-class PostListView(ListView):
-    queryset = Post.latest_posts()
-    paginate_by = 2
-    context_object_name = 'post_list'
-    template_name = 'list.html'
-
-
-class PostDetailView(DetailView):
-    model = Post
-    template_name = 'detail.html'
-
-
-class IndexView(ListView):
-    queryset = Post.latest_posts()
-    paginate_by = 2
-    context_object_name = 'post_list'
-    template_name = 'list.html'
-
-
 class CommonViewMixin:
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -88,13 +71,33 @@ class CommonViewMixin:
         }
 
 
-# class IndexView(CommonViewMixin, ListView):
-#     queryset = Post.objects.filter(status=Post.STATUS_NORMAL) \
-#         .select_related('owner') \
-#         .select_related('category')
-#     paginate_by = 5
-#     context_object_name = 'post_list'
-#     template_name = 'list.html'
+class PostListView(ListView):
+    queryset = Post.latest_posts()
+    paginate_by = 2
+    context_object_name = 'post_list'
+    template_name = 'list.html'
+
+
+class PostDetailView(CommonViewMixin, DetailView):
+    queryset = Post.latest_posts()
+    template_name = 'detail.html'
+    context_object_name = 'post'
+    # pk_url_kwarg = 'post_id'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'comment_form': CommentForm,
+            'comment_list': Comment.get_by_target(self.request.path),
+        })
+        return context
+
+
+class IndexView(ListView):
+    queryset = Post.latest_posts()
+    paginate_by = 2
+    context_object_name = 'post_list'
+    template_name = 'list.html'
 
 
 class CategoryView(IndexView):
@@ -152,4 +155,3 @@ class AuthorView(IndexView):
         queryset = super().get_queryset()
         author_id = self.kwargs.get('owner_id')
         return queryset.filter(owner_id=author_id)
-
